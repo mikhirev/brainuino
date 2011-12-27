@@ -1,0 +1,9 @@
+Brainuino is an open source project for developing hardware and software
+for intellectual games. Brainuino Aleph is a first model of game device
+combining timer and answer detector.
+
+This progect contains device firmware source code. You will need Arduino IDE
+(http://arduino.cc/en/Main/Software) to use it.
+
+This project is licenced under GPLv3 or later
+(https://www.gnu.org/licenses/gpl.html).
