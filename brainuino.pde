@@ -53,6 +53,11 @@ void loop()
   startTime = 0;
   timer = timer1;
   printGameType();
+
+  // ensure that stop button is released
+  while (digitalRead(CONTROL2) == LOW) {
+    delay(20);
+  }
   ask();
 }
 
@@ -68,13 +73,18 @@ void ask()
 #endif
 
   while (true) {
-    
+
     // if start button is pressed
     if (digitalRead(CONTROL1) == LOW) {
       discuss();
       return;
     }
-    
+
+    // if stop button is pressed
+    if (digitalRead(CONTROL2) == LOW) {
+      return;
+    }
+
     // some other button could be pressed
     switch (buttonPressed) {
       case 0:
@@ -89,8 +99,6 @@ void ask()
         else {
           answer(buttonPressed);
         }
-      case 5:
-        return;
     }
 
     delay(100);
@@ -129,14 +137,22 @@ void discuss()
   while (!buttonPressed && time < (timer - preSignal) * 1000) {
     refresh();
     delay(25);
+    if (digitalRead(CONTROL2) == LOW) {
+      tone(SPEAKER, 1500, 500);
+      return;
+    }
   }
   if (!buttonPressed)
     tone(SPEAKER, 2121, 1000);
   while (!buttonPressed && time < timer * 1000) {
     refresh();
     delay(25);
+    if (digitalRead(CONTROL2) == LOW) {
+      tone(SPEAKER, 1784, 500);
+      return;
+    }
   }
-  
+
   // the time is out or someone pressed a button... hmm...
   switch (buttonPressed) {
     case 1:
@@ -144,8 +160,6 @@ void discuss()
     case 3:
     case 4:
       answer(buttonPressed);
-    case 5:
-      buttonPressed = 0;
       break;
     case 0:
       tone(SPEAKER, 3000, 1000);
@@ -175,32 +189,27 @@ void answer(uint8_t num) {
   printPreciseTime();
   tone(SPEAKER, 2523, 1000);
   buttonPressed = 0;
-  
+
   // a pause is needed to release start button, if it was not yet
   delay(2000);
-  
+
   while (true) {
-    
+
     // if start button was pressed
     if (digitalRead(CONTROL1) == LOW) {
-      buttonPressed = 0;
       digitalWrite(REDLAMP, LOW);
+      buttonPressed = 0;
       discuss();
       return;
     }
-    
+
     // if stop button was pressed
-    switch (buttonPressed) {
-      case 0:
-        break;
-      case 5:
-        buttonPressed = 0;
+    if (digitalRead(CONTROL2) == LOW) {
         digitalWrite(REDLAMP, LOW);
-        return;
-      default:
         buttonPressed = 0;
+        return;
     }
-    
+
     delay(100);
   }
 }
@@ -300,10 +309,6 @@ void readButton() {
   }
   if (digitalRead(BUTTON4) == LOW) {
     buttonPressed = 4;
-    return;
-  }
-  if (digitalRead(CONTROL2) == LOW) {
-    buttonPressed = 5;
     return;
   }
 }
