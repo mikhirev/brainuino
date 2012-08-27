@@ -24,10 +24,7 @@
 
 #include "pinout.h"
 #include "game.h"
-
-#ifdef RUSSIAN
-#include "lcdrus.h"
-#endif
+#include "lcdprint.h"
 
 LiquidCrystal lcd(LCD4, LCD6, LCD11, LCD12, LCD13, LCD14);
 
