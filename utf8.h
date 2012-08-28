@@ -28,8 +28,9 @@ class utf8 {
     uint16_t chars;
     uint16_t bytes;
     int32_t get();
+    char* string;
+
   private:
-    char* _string;
     uint16_t _index;
 };
 

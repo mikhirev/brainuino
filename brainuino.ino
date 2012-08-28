@@ -1,7 +1,7 @@
 /*
     Brainuino Aleph
 
-    Copyright (C) 2011  Dmitry Mikhirev
+    Copyright (C) 2011-2012  Dmitry Mikhirev
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,10 +17,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <stdio.h>
 #include <LiquidCrystal.h>
 
 // undefine the following if your LCD does not support Russian font
-//#define RUSSIAN
+#define RUSSIAN
 
 #include "pinout.h"
 #include "game.h"
@@ -51,12 +52,10 @@ void loop()
   timer = timer1;
   printGameType();
 
-/*
 // ensure that stop button is released
   while (digitalRead(CONTROL2) == LOW) {
     delay(20);
   }
-*/
   ask();
 }
 
@@ -69,7 +68,7 @@ void ask()
   digitalWrite(REDLAMP, LOW);
 
 #ifdef RUSSIAN
-  printState(convert("Задаётся вопрос "));
+  printState("Задаётся вопрос ");
 #else
   printState("Asking question ");
 #endif
@@ -131,7 +130,7 @@ void discuss()
   printGameType();
 
 #ifdef RUSSIAN
-  printState(convert("Отсчёт:         "));
+  printState("Отсчёт:         ");
 #else
   printState("Count:          ");
 #endif
@@ -183,7 +182,7 @@ void answer(uint8_t num) {
   printPlayer(num);
 
 #ifdef RUSSIAN
-  printState(convert("Ответ           "));
+  printState("Ответ           ");
 #else
   printState("Answer          ");
 #endif
@@ -224,7 +223,7 @@ void falseStart(uint8_t num) {
   tone(SPEAKER, 1784, 1000);
   digitalWrite(REDLAMP, HIGH);
 #ifdef RUSSIAN
-  printState(convert("   Фальстарт    "));
+  printState("   Фальстарт    ");
 #else
   printState("  False start   ");
 #endif
@@ -244,12 +243,12 @@ void refresh() {
 }
 
 
-void printState(String state) {
+void printState(char *state) {
 
 // displaying string in the beginning of LCD second row
 
   lcd.setCursor(0, 1);
-  lcd.print(state);
+  uprint(state, &lcd);
 }
 
 
@@ -257,11 +256,11 @@ void printTime() {
 
 // displaying time passed after starting timer
 
-  String timestr;
+  char timestr[33];
 
-  timestr = String(time/1000) + '.' + String((time%1000)/100);
+  sprintf(timestr, "%.1f", float(time)/1000;
   lcd.setCursor(8, 1);
-  lcd.print(timestr);
+  uprint(timestr, &lcd);
 }
 
 
@@ -270,24 +269,24 @@ void printPreciseTime() {
 // displaying time passed after starting timer
 // or that it was not started yet
 
-  String timestr;
+  char timestr[33];
 
   // if timer was started
   if (startTime > 0) {
     time = millis()-startTime;
-    timestr = String(time/1000) + '.' + String(time%1000);
+    sprintf(timestr, "%.3f", float(time)/1000);
   }
   // if it was not
   else
 
 #ifdef RUSSIAN
-    timestr = convert("досрочно");
+    sprintf(timestr, "досрочно");
 #else
-    timestr = "prematur";
+    sprintf(timestr, "prematur");
 #endif
 
   lcd.setCursor(8, 1);
-  lcd.print(timestr);
+  uprint(timestr, &lcd);
 }
 
 
@@ -345,27 +344,27 @@ void printGameType() {
     case BRAIN:
 
 #ifdef RUSSIAN
-      lcd.print(convert("   Брейн-ринг   "));
+      uprint("   Брейн-ринг   ", &lcd);
 #else
-      lcd.print("   Brain-ring   ");
+      uprint("   Brain-ring   ", &lcd);
 #endif
 
       break;
     case SI:
 
 #ifdef RUSSIAN
-      lcd.print(convert("   Своя игра    "));
+      uprint("   Своя игра    ", &lcd);
 #else
-      lcd.print("    Jeopardy    ");
+      uprint("    Jeopardy    ", &lcd);
 #endif
 
       break;
     case CHGK:
 
 #ifdef RUSSIAN
-      lcd.print(convert("Что? Где? Когда?"));
+      uprint("Что? Где? Когда?", &lcd);
 #else
-      lcd.print("What?Where?When?");
+      uprint("What?Where?When?", &lcd);
 #endif
 
       break;
@@ -377,26 +376,29 @@ void printPlayer(uint8_t num) {
 
 // displaying number of player or team
 
+  char printstring[65];
+
   lcd.setCursor(0, 0);
   switch (gameType) {
     case BRAIN:
 
 #ifdef RUSSIAN
-      lcd.print(convert("Команда ") + String(int(num)) + "       ");
+      sprintf(printstring, "Команда %u       ", num);
 #else
-      lcd.print("Team " + String(int(num)) + "          ");
+      sprintf(printstring, "Team %u          ", num);
 #endif
 
       break;
     case SI:
 
 #ifdef RUSSIAN
-      lcd.print(convert("Игрок ") + String(int(num)) + "         ");
+      sprintf(printstring, "Игрок %u         ", num);
 #else
-      lcd.print("Player " + String(int(num) + "        "));
+      sprintf(printstring, "Player %u        ", num);
 #endif
 
       break;
   }
+  uprint(printstring, &lcd);
   buttonPressed = 0;
 }

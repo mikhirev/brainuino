@@ -22,6 +22,6 @@
 
 #include "utf8.h"
 
-char* convert (utf8);
+size_t uprint (utf8, LiquidCrystal*);
 
 #endif

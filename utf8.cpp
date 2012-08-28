@@ -20,23 +20,22 @@
 #include "utf8.h"
 #include <string.h>
 
-utf8::utf8 (char* string)
+utf8::utf8 (char* input)
 {
-  bytes = strlen(string);
-  _string = (char *)malloc(bytes + 1);
-  strcpy(_string, string);
+  bytes = strlen(input);
+  string = strdup(input);
   chars = 0;
   for (_index = 0; _index < bytes; _index++) {
-    if (_string[_index] & 0x80 == 0) {
+    if ((string[_index] & 0x80) == 0x00) {
       chars++;
-    } else if (_string[_index] & 0x20 == 0) {
-      chars += 2;
-      _index++;
-    } else if (_string[_index] & 0x10 == 0) {
-      chars += 3;
+    } else if ((string[_index] & 0x20) == 0x00) {
+      chars++;
+      _index ++;
+    } else if ((string[_index] & 0x10) == 0x00) {
+      chars++;
       _index += 2;
-    } else if (_string[_index] & 0x8 == 0) {
-      chars += 4;
+    } else if ((string[_index] & 0x08) == 0x00) {
+      chars++;
       _index += 3;
     }
   }
@@ -46,18 +45,18 @@ utf8::utf8 (char* string)
 int32_t utf8::get()
 {
   int32_t code;
-  if (_string[_index] & 0x80 == 0) {
-    code = int32_t(_string[_index]);
+  if ((string[_index] & 0x80) == 0) {
+    code = int32_t(string[_index]);
     _index++;
-  } else if (_string[_index] & 0x20 == 0) {
-    code = int32_t(_string[_index] & 0x1f) << 6 | int32_t(_string[_index+1] & 0x3f);
+  } else if ((string[_index] & 0x20) == 0) {
+    code = int32_t(string[_index] & 0x1f) << 6 | int32_t(string[_index+1] & 0x3f);
     _index += 2;
-  } else if (_string[_index] & 0x10 == 0) {
-    code = int32_t(_string[_index] & 0xf) << 12 | int32_t(_string[_index+1] & 0x3f) << 6 | int32_t(_string[_index+2] & 0x3f);
+  } else if ((string[_index] & 0x10) == 0) {
+    code = int32_t(string[_index] & 0xf) << 12 | int32_t(string[_index+1] & 0x3f) << 6 | int32_t(string[_index+2] & 0x3f);
     _index += 3;
-  } else if (_string[_index] & 0x8 == 0) {
-    code = int32_t(_string[_index] & 0x7) << 18 | int32_t(_string[_index+1] & 0x3f) << 12 | int32_t(_string[_index+2] & 0x3f) << 6 | int32_t(_string[_index+3] & 0x3f);
+  } else if ((string[_index] & 0x8) == 0) {
+    code = int32_t(string[_index] & 0x7) << 18 | int32_t(string[_index+1] & 0x3f) << 12 | int32_t(string[_index+2] & 0x3f) << 6 | int32_t(string[_index+3] & 0x3f);
   }
-  if (_index > bytes) _index = 0;
+  if (_index >= bytes) _index = 0;
   return code;
 }

@@ -17,8 +17,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef en_ru_h
-#define en_ru_h
+#ifndef font_h
+#define font_h
 
 #include <avr/pgmspace.h>
 
@@ -27,7 +27,7 @@ struct charcode {
   const char font;
 };
 
-const charcode charmap[] PROGMEM = {
+charcode charmap[] PROGMEM = {
 // tilde
   {0x007e, 0xe9},
 // latin-1 supplement
@@ -118,7 +118,7 @@ const charcode charmap[] PROGMEM = {
   {0x043c, 0xbc},
   {0x043d, 0xbd},
   {0x043e, 0x6f},
-  {0x043f, 0xbf},
+  {0x043f, 0xbe},
   {0x0440, 0x70},
   {0x0441, 0x63},
   {0x0442, 0xbf},

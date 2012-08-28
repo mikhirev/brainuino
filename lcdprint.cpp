@@ -17,12 +17,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
+#include <LiquidCrystal.h>
 #include "lcdprint.h"
-#include "font_ru-en.h"
-//#include "font_en.h"
+#include "font.h"
 
-char* convert(utf8 str)
+size_t uprint(utf8 str, LiquidCrystal *lcd)
 {
   int32_t ucode;
   int i, j;
@@ -36,9 +35,9 @@ char* convert(utf8 str)
         result[i] = char(ucode);
       } else {
         result[i] = 0xff;
-        for (j = 0; j < numcodes && charmap[j].uni < ucode; j++) {
-            if (charmap[j].uni == ucode) {
-              result[i] = charmap[j].font;
+        for (j = 0; (j < numcodes) && (pgm_read_dword(&charmap[j].uni) <= ucode); j++) {
+            if (pgm_read_dword(&charmap[j].uni) == ucode) {
+              result[i] = pgm_read_byte(&charmap[j].font);
             }
         }
       }
@@ -47,6 +46,5 @@ char* convert(utf8 str)
       break;
     }
   }
-
-  return result;
+  return lcd->print(result);
 }
