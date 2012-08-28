@@ -20,7 +20,7 @@
 #include <LiquidCrystal.h>
 
 // undefine the following if your LCD does not support Russian font
-#define RUSSIAN
+//#define RUSSIAN
 
 #include "pinout.h"
 #include "game.h"
@@ -35,7 +35,7 @@ void setup()
   pinInit();
   time = 0;
   
-  // the following settings should be readen from EEPROM
+  // TODO: the following settings should be readen from EEPROM
   gameType = SI;
   withFalseStart = false;
   timer1 = 5;
@@ -51,10 +51,12 @@ void loop()
   timer = timer1;
   printGameType();
 
-  // ensure that stop button is released
+/*
+// ensure that stop button is released
   while (digitalRead(CONTROL2) == LOW) {
     delay(20);
   }
+*/
   ask();
 }
 
@@ -62,6 +64,9 @@ void loop()
 void ask()
 {
 // waiting while question is being asked
+
+  digitalWrite(GREENLAMP, LOW);
+  digitalWrite(REDLAMP, LOW);
 
 #ifdef RUSSIAN
   printState(convert("Задаётся вопрос "));
