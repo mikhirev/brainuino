@@ -25,11 +25,16 @@
 #define SI    1
 #define CHGK  2
 
+//question status
+#define CORRECT 1
+#define WRONG 0
+#define NOREPLY -1
+
 uint8_t gameType;
 uint8_t withFalseStart;
 uint8_t timer1;
 uint8_t timer2;
-uint32_t timer;
+//uint32_t timer;
 uint8_t preSignal;
 uint32_t startTime;
 uint32_t time;

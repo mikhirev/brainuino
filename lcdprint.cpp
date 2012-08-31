@@ -32,7 +32,7 @@ size_t uprint(utf8 str, LiquidCrystal *lcd)
     ucode = str.get();
     if (ucode > 0x0000) {
       if (ucode <= 0x007d) {
-        result[i] = char(ucode);
+        result[i] = ucode;
       } else {
         result[i] = 0xff;
         for (j = 0; (j < numcodes) && (pgm_read_dword(&charmap[j].uni) <= ucode); j++) {
@@ -42,9 +42,9 @@ size_t uprint(utf8 str, LiquidCrystal *lcd)
         }
       }
     } else {
-      result[i] = 0x00;
       break;
     }
   }
+  result[i] = 0;
   return lcd->print(result);
 }

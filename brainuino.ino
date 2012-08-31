@@ -49,7 +49,7 @@ void loop()
 {
   buttonPressed = 0;
   startTime = 0;
-  timer = timer1;
+//  timer = timer1;
   printGameType();
 
 // ensure that stop button is released
@@ -75,9 +75,19 @@ void ask()
 
   while (true) {
 
+    if (buttonPressed) {
+      if (withFalseStart) {
+        falseStart(buttonPressed);
+      } else {
+        answer(buttonPressed);
+      }
+    }
+
     // if start button is pressed
     if (digitalRead(CONTROL1) == LOW) {
-      discuss();
+      if (discuss(timer1) == WRONG) {
+        while (discuss(timer2) == WRONG) {}
+      }
       return;
     }
 
@@ -86,40 +96,28 @@ void ask()
       return;
     }
 
-    // some other button could be pressed
-    switch (buttonPressed) {
-      case 0:
-        break;
-      case 1:
-      case 2:
-      case 3:
-      case 4: 
-        if (withFalseStart) {
-          falseStart(buttonPressed);
-        }
-        else {
-          answer(buttonPressed);
-        }
-    }
-
     delay(100);
   }
 }
 
 
-void discuss()
+char discuss(uint16_t timer)
 {
 // here teams can discuss question or single players think themselves
 
+  char reply = NOREPLY;
+
   // is random delay needed here when playing with false starts? unsure...
 
-  time = 0;
+//  time = 0;
 
   // reset timer or continue count
-  if (startTime == 0 || timer2 > 0)
+  if (timer > 0) {
+    time = 0;
     startTime = millis();
-  else
+  } else {
     startTime = millis() - time;
+  }
 
   // we need sound signal here only if we are playing with false starts
   // or am i wrong?
@@ -127,6 +125,7 @@ void discuss()
     tone(SPEAKER, 3000, 1000);
 
   digitalWrite(GREENLAMP, HIGH);
+  digitalWrite(REDLAMP, LOW);
   printGameType();
 
 #ifdef RUSSIAN
@@ -140,7 +139,7 @@ void discuss()
     delay(25);
     if (digitalRead(CONTROL2) == LOW) {
       tone(SPEAKER, 1500, 500);
-      return;
+      return reply;
     }
   }
   if (!buttonPressed)
@@ -150,35 +149,34 @@ void discuss()
     delay(25);
     if (digitalRead(CONTROL2) == LOW) {
       tone(SPEAKER, 1784, 500);
-      return;
+      return reply;
     }
   }
 
   // the time is out or someone pressed a button... hmm...
-  switch (buttonPressed) {
-    case 1:
-    case 2:
-    case 3:
-    case 4:
-      answer(buttonPressed);
-      break;
-    case 0:
+  if (buttonPressed) {
+    reply = answer(buttonPressed);
+  } else {
       tone(SPEAKER, 3000, 1000);
   }
-  digitalWrite(GREENLAMP, LOW);
-  digitalWrite(REDLAMP, LOW);
-  delay(1000);
-  return;
+
+  if (reply != WRONG)  {
+    digitalWrite(GREENLAMP, LOW);
+    digitalWrite(REDLAMP, LOW);
+    startTime = 0;
+    delay(1000);
+  }
+  return reply;
 }
 
 
-void answer(uint8_t num) {
+char answer(uint8_t num) {
 
 // waiting while answer is given
 
   digitalWrite(REDLAMP, HIGH);
-  if (timer2 > 0)
-    timer = timer2;
+//  if (timer2 > 0)
+//    timer = timer2;
   printPlayer(num);
 
 #ifdef RUSSIAN
@@ -198,17 +196,16 @@ void answer(uint8_t num) {
 
     // if start button was pressed
     if (digitalRead(CONTROL1) == LOW) {
-      digitalWrite(REDLAMP, LOW);
+//      digitalWrite(REDLAMP, LOW);
       buttonPressed = 0;
-      discuss();
-      return;
+      return WRONG;
     }
 
     // if stop button was pressed
     if (digitalRead(CONTROL2) == LOW) {
-        digitalWrite(REDLAMP, LOW);
+//        digitalWrite(REDLAMP, LOW);
         buttonPressed = 0;
-        return;
+        return CORRECT;
     }
 
     delay(100);
@@ -258,7 +255,7 @@ void printTime() {
 
   char timestr[33];
 
-  sprintf(timestr, "%.1f", float(time)/1000;
+  sprintf(timestr, "%u.%u", time/1000, (time%1000)/100);
   lcd.setCursor(8, 1);
   uprint(timestr, &lcd);
 }
@@ -274,7 +271,7 @@ void printPreciseTime() {
   // if timer was started
   if (startTime > 0) {
     time = millis()-startTime;
-    sprintf(timestr, "%.3f", float(time)/1000);
+    sprintf(timestr, "%u.%u", time/1000, time%1000);
   }
   // if it was not
   else
