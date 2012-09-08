@@ -27,7 +27,7 @@ struct charcode {
   const char font;
 };
 
-charcode charmap[] PROGMEM = {
+const charcode charmap[] PROGMEM = {
 // tilde
   {0x007e, 0xe9},
 // latin-1 supplement
