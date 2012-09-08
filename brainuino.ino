@@ -20,9 +20,6 @@
 #include <stdio.h>
 #include <LiquidCrystal.h>
 
-// undefine the following if your LCD does not support Russian font
-#define RUSSIAN
-
 #include "pinout.h"
 #include "game.h"
 #include "lcdprint.h"

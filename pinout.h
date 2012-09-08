@@ -25,6 +25,9 @@ digital pins 2 and 3 must be used for interrupts */
 #ifndef pinout_h
 #define pinout_h
 
+// undefine the following if your LCD does not support Russian font
+#define RUSSIAN
+
 // digital pins connected to LCD display
 #define LCD4    7
 #define LCD6    8
