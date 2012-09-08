@@ -21,11 +21,12 @@
 #include "lcdprint.h"
 #include "font.h"
 
-size_t uprint(utf8 str, LiquidCrystal *lcd)
+size_t uprint(char* rawstr, LiquidCrystal *lcd)
 {
   int32_t ucode;
   int i, j;
   int numcodes = sizeof(charmap)/sizeof(charcode);
+  utf8 str = utf8(rawstr);
   char result[str.chars];
 
   for (i = 0; i < str.chars; i++) {

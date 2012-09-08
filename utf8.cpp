@@ -42,6 +42,11 @@ utf8::utf8 (char* input)
   _index = 0;
 }
 
+utf8::~utf8 ()
+{
+  free(string);
+}
+
 int32_t utf8::get()
 {
   int32_t code;

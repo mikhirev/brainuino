@@ -25,6 +25,7 @@
 class utf8 {
   public:
     utf8(char* string);
+    ~utf8(void);
     uint16_t chars;
     uint16_t bytes;
     int32_t get();
