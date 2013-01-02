@@ -251,8 +251,12 @@ void printTime() {
 // displaying time passed after starting timer
 
   char timestr[33];
+  char integer[10];
+  char fractional[2];
 
-  sprintf(timestr, "%u.%u", time/1000, (time%1000)/100);
+  sprintf(integer, "%u", time/1000);
+  sprintf(fractional, "%u", time%1000/100);
+  sprintf(timestr, "%s.%s", integer, fractional);
   lcd.setCursor(8, 1);
   uprint(timestr, &lcd);
 }
@@ -264,11 +268,15 @@ void printPreciseTime() {
 // or that it was not started yet
 
   char timestr[33];
+  char integer[10];
+  char fractional[4];
 
   // if timer was started
   if (startTime > 0) {
     time = millis()-startTime;
-    sprintf(timestr, "%u.%u", time/1000, time%1000);
+    sprintf(integer, "%u", time/1000);
+    sprintf(fractional, "%03u", time%1000);
+    sprintf(timestr, "%s.%s", integer, fractional);
   }
   // if it was not
   else
