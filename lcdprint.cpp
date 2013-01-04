@@ -27,9 +27,9 @@ size_t uprint(char* rawstr, LiquidCrystal *lcd)
   int i, j;
   int numcodes = sizeof(charmap)/sizeof(charcode);
   utf8 str = utf8(rawstr);
-  char result[str.chars];
+  char result[str.chars()];
 
-  for (i = 0; i < str.chars; i++) {
+  for (i = 0; i < str.chars(); i++) {
     ucode = str.get();
     if (ucode > 0x0000) {
       if (ucode <= 0x007d) {

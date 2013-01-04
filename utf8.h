@@ -1,7 +1,7 @@
 /*
     Brainuino Aleph
 
-    Copyright (C) 2012  Dmitry Mikhirev
+    Copyright (C) 2012, 2013  Dmitry Mikhirev
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -26,13 +26,15 @@ class utf8 {
   public:
     utf8(char* string);
     ~utf8(void);
-    uint16_t chars;
-    uint16_t bytes;
     int32_t get();
-    char* string;
+    uint16_t chars();
+    uint16_t bytes();
 
   private:
     uint16_t _index;
+    uint16_t _chars;
+    uint16_t _bytes;
+    char* _string;
 };
 
 #endif
