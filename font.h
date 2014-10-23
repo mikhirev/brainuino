@@ -1,7 +1,7 @@
 /*
     Brainuino Aleph
 
-    Copyright (C) 2012  Dmitry Mikhirev
+    Copyright (C) 2012, 2014  Dmitry Mikhirev
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -23,15 +23,17 @@
 #include <avr/pgmspace.h>
 #include "pinout.h"
 
+const char NOCHAR = 0xff;
+
 struct charcode {
-  const int32_t uni;
+  const wchar_t uni;
   const char font;
 };
 
 const charcode charmap[] PROGMEM = {
+// NB: keep this array sorted by uni values
   
-#ifdef RUSSIAN
-// English + Russian font
+#ifdef RUSSIAN // English + Russian font
 
 // tilde
   {0x007e, 0xe9},
@@ -75,7 +77,7 @@ const charcode charmap[] PROGMEM = {
   {0x03bf, 0x6f},
   {0x03c0, 0xbe},
   {0x03c1, 0x70},
-// cyryllic
+// cyrillic
   {0x0401, 0xa2},
   {0x0410, 0x41},
   {0x0411, 0xa0},
@@ -161,8 +163,7 @@ const charcode charmap[] PROGMEM = {
   {0x2218, 0xef},
   {0x22c5, 0xdf}
 
-#else
-// English + Japan (katakana) font
+#else // English + Japan (katakana) font
 
 // latin-1 supplement
   {0x00a2, 0xec},

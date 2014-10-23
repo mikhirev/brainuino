@@ -1,7 +1,7 @@
 /*
     Brainuino Aleph
 
-    Copyright (C) 2011  Dmitry Mikhirev
+    Copyright (C) 2011, 2014  Dmitry Mikhirev
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -28,13 +28,15 @@ digital pins 2 and 3 must be used for interrupts */
 // undefine the following if your LCD does not support Russian font
 #define RUSSIAN
 
+enum {
+
 // digital pins connected to LCD display
-#define LCD4    7
-#define LCD6    8
-#define LCD11   9
-#define LCD12   10
-#define LCD13   11
-#define LCD14   12
+  LCD4  =  7,
+  LCD6  =  8,
+  LCD11 =  9,
+  LCD12 = 10,
+  LCD13 = 11,
+  LCD14 = 12,
 /* pins 1 and 5 of LCD must be connected to GND,
 pin 2 - to +5V
 pin 3 - to 10K potentiometer
@@ -43,29 +45,30 @@ and GND respectively
 pins 7-10 - no connection */
 
 // digital pin connected to speaker
-#define SPEAKER 5
+  SPEAKER = 5,
 
 // digital pin connected to LED lamp
-#define GREENLAMP 13
-#define REDLAMP   6
+  GREENLAMP = 13,
+  REDLAMP   =  6,
 
 // digital pins connected to players' buttons
-#define BUTTON1 14
-#define BUTTON2 15
-#define BUTTON3 16
-#define BUTTON4 17
+  BUTTON1 = 14,
+  BUTTON2 = 15,
+  BUTTON3 = 16,
+  BUTTON4 = 17,
 
 // digital pins connected to control buttons
 // start/OK button
-#define CONTROL1 18
+  CONTROL1 = 18,
 // break/cansel button
-#define CONTROL2 19
+  CONTROL2 = 19,
 
 // digital pin connected to encoder button
-#define ENCPUSH 20
+  ENCPUSH = 20,
 
 // digital pin connected to encoder 'B' output
-#define ENCODERB   4
+  ENCODERB = 4,
 // encoder 'A' output must be connected to Arduino D3
+};
 
 #endif

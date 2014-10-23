@@ -1,7 +1,7 @@
 /*
     Brainuino Aleph
 
-    Copyright (C) 2011  Dmitry Mikhirev
+    Copyright (C) 2011, 2014  Dmitry Mikhirev
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -21,17 +21,21 @@
 #define game_h
 
 // game types
-#define BRAIN 0
-#define SI    1
-#define CHGK  2
+enum game_t {
+  BRAIN ,
+  SI,
+  CHGK,
+};
 
 //question status
-#define CORRECT 1
-#define WRONG 0
-#define NOREPLY -1
+enum answer_t {
+  CORRECT =  1,
+  WRONG   =  0,
+  NOREPLY = -1,
+};
 
-uint8_t gameType;
-uint8_t withFalseStart;
+game_t gameType;
+bool withFalseStart;
 uint8_t timer1;
 uint8_t timer2;
 //uint32_t timer;

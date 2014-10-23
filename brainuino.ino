@@ -1,7 +1,7 @@
 /*
     Brainuino Aleph
 
-    Copyright (C) 2011-2013  Dmitry Mikhirev
+    Copyright (C) 2011-2014  Dmitry Mikhirev
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -26,7 +26,6 @@
 
 LiquidCrystal lcd(LCD4, LCD6, LCD11, LCD12, LCD13, LCD14);
 
-
 void setup()
 {
   lcd.begin(16, 2);
@@ -40,7 +39,6 @@ void setup()
   timer2 = 5;
   preSignal = 0;
 }
-
 
 void loop()
 {
@@ -56,18 +54,17 @@ void loop()
   ask();
 }
 
-
+// ask() - wait until start button is pressed, then run timer
+// the question should be asked at this time
 void ask()
 {
-// waiting while question is being asked
-
   digitalWrite(GREENLAMP, LOW);
   digitalWrite(REDLAMP, LOW);
 
 #ifdef RUSSIAN
-  printState("Задаётся вопрос ");
+  printState(F("Задаётся вопрос "));
 #else
-  printState("Asking question ");
+  printState(F("Asking question "));
 #endif
 
   while (true) {
@@ -80,16 +77,14 @@ void ask()
       }
     }
 
-    // if start button is pressed
-    if (digitalRead(CONTROL1) == LOW) {
+    if (digitalRead(CONTROL1) == LOW) {  // start button is pressed
       if (discuss(timer1) == WRONG) {
         while (discuss(timer2) == WRONG) {}
       }
       return;
     }
 
-    // if stop button is pressed
-    if (digitalRead(CONTROL2) == LOW) {
+    if (digitalRead(CONTROL2) == LOW) { // stop button is pressed
       return;
     }
 
@@ -97,16 +92,13 @@ void ask()
   }
 }
 
-
-char discuss(uint16_t timer)
-{
+// discuss() - start timer and wait for button being pressed
 // here teams can discuss question or single players think themselves
-
-  char reply = NOREPLY;
+answer_t discuss(uint16_t timer)
+{
+  answer_t reply = NOREPLY;
 
   // is random delay needed here when playing with false starts? unsure...
-
-//  time = 0;
 
   // reset timer or continue count
   if (timer > 0) {
@@ -126,9 +118,9 @@ char discuss(uint16_t timer)
   printGameType();
 
 #ifdef RUSSIAN
-  printState("Отсчёт:         ");
+  printState(F("Отсчёт:         "));
 #else
-  printState("Count:          ");
+  printState(F("Count:          "));
 #endif
 
   while (!buttonPressed && time < (timer - preSignal) * 1000) {
@@ -166,20 +158,19 @@ char discuss(uint16_t timer)
   return reply;
 }
 
-
-char answer(uint8_t num) {
-
-// waiting while answer is given
-
+// answer() - wait while the answer is given
+// return answer correctness
+answer_t answer(uint8_t num)
+{
   digitalWrite(REDLAMP, HIGH);
 //  if (timer2 > 0)
 //    timer = timer2;
   printPlayer(num);
 
 #ifdef RUSSIAN
-  printState("Ответ           ");
+  printState(F("Ответ           "));
 #else
-  printState("Answer          ");
+  printState(F("Answer          "));
 #endif
 
   printPreciseTime();
@@ -193,33 +184,29 @@ char answer(uint8_t num) {
 
     // if start button was pressed
     if (digitalRead(CONTROL1) == LOW) {
-//      digitalWrite(REDLAMP, LOW);
       buttonPressed = 0;
       return WRONG;
     }
 
     // if stop button was pressed
     if (digitalRead(CONTROL2) == LOW) {
-//        digitalWrite(REDLAMP, LOW);
-        buttonPressed = 0;
-        return CORRECT;
+      buttonPressed = 0;
+      return CORRECT;
     }
 
     delay(100);
   }
 }
 
-
-void falseStart(uint8_t num) {
-
-// if there is false start, show info about it during few time
-
+// falseStart() - display false start message
+void falseStart(uint8_t num)
+{
   tone(SPEAKER, 1784, 1000);
   digitalWrite(REDLAMP, HIGH);
 #ifdef RUSSIAN
-  printState("   Фальстарт    ");
+  printState(F("   Фальстарт    "));
 #else
-  printState("  False start   ");
+  printState(F("  False start   "));
 #endif
   printPlayer(num);
   delay(3000);
@@ -227,75 +214,66 @@ void falseStart(uint8_t num) {
   return;
 }
 
-
-void refresh() {
-
-// displaying current timer state
-
+// refresh() - display current timer state
+void refresh()
+{
   time = millis() - startTime;
   printTime();
 }
 
-
-void printState(char *state) {
-
-// displaying string in the beginning of LCD second row
-
+// printState() - display string in the beginning of LCD second row
+void printState(const char *state)
+{
   lcd.setCursor(0, 1);
   uprint(state, &lcd);
 }
 
-
-void printTime() {
-
-// displaying time passed after starting timer
-
-  char timestr[33];
-  char integer[10];
-  char fractional[2];
-
-  sprintf(integer, "%u", time/1000);
-  sprintf(fractional, "%u", time%1000/100);
-  sprintf(timestr, "%s.%s", integer, fractional);
-  lcd.setCursor(8, 1);
-  uprint(timestr, &lcd);
+// printState() variant getting strings stored in flash
+void printState(const __FlashStringHelper *state)
+{
+  lcd.setCursor(0, 1);
+  uprint(state, &lcd);
 }
 
+// printTime() - display time passed since timer was started
+void printTime()
+{
+  char s[4];
 
-void printPreciseTime() {
+  lcd.setCursor(8, 1);
+  itoa(time/1000, s, 10);
+  uprint(s, &lcd);
+  uprint(".", &lcd);
+  itoa(time%1000/100, s, 10);
+  uprint(s, &lcd);
+}
 
-// displaying time passed after starting timer
+// printPreciseTime() - display time passed since timer was started
 // or that it was not started yet
-
-  char timestr[33];
-  char integer[10];
-  char fractional[4];
-
-  // if timer was started
-  if (startTime > 0) {
-    time = millis()-startTime;
-    sprintf(integer, "%u", time/1000);
-    sprintf(fractional, "%03u", time%1000);
-    sprintf(timestr, "%s.%s", integer, fractional);
-  }
-  // if it was not
-  else
-
-#ifdef RUSSIAN
-    sprintf(timestr, "досрочно");
-#else
-    sprintf(timestr, "prematur");
-#endif
+void printPreciseTime()
+{
+  char s[5];
 
   lcd.setCursor(8, 1);
-  uprint(timestr, &lcd);
+
+  if (startTime > 0) { // timer was started
+    time = millis()-startTime;
+    itoa(time/1000, s, 10);
+    uprint(s, &lcd);
+    sprintf(s, ".%03u", time%1000);
+    uprint(s, &lcd);
+  } else { // timer was not started yet
+#ifdef RUSSIAN
+    uprint(F("досрочно"), &lcd);
+#else
+    uprint(F("prematur"), &lcd);
+#endif
+  }
 }
 
-
-void readButton() {
-  
-// scan buttons
-
+// readButton() - scan buttons
+void readButton()
+{
   if (buttonPressed > 0)
     return;
   if (digitalRead(BUTTON1) == LOW) {
@@ -316,11 +294,9 @@ void readButton() {
   }
 }
 
-
-void pinInit() {
-
-// Arduino I/O initialisation, needed on startup only
-
+// pinInit() - Arduino I/O initialization, needed on startup only
+void pinInit()
+{
   digitalWrite(2, HIGH);
   digitalWrite(3, HIGH);
   digitalWrite(BUTTON1, HIGH);
@@ -336,48 +312,44 @@ void pinInit() {
   attachInterrupt(0, readButton, FALLING);
 }
 
-
-void printGameType() {
-
-// displaying game title on LCD
-
+// printGameType() - display game title on LCD
+void printGameType()
+{
   lcd.setCursor(0, 0);
   switch (gameType) {
     case BRAIN:
 
 #ifdef RUSSIAN
-      uprint("   Брейн-ринг   ", &lcd);
+      uprint(F("   Брейн-ринг   "), &lcd);
 #else
-      uprint("   Brain-ring   ", &lcd);
+      uprint(F("   Brain-ring   "), &lcd);
 #endif
 
       break;
     case SI:
 
 #ifdef RUSSIAN
-      uprint("   Своя игра    ", &lcd);
+      uprint(F("   Своя игра    "), &lcd);
 #else
-      uprint("    Jeopardy    ", &lcd);
+      uprint(F("    Jeopardy    "), &lcd);
 #endif
 
       break;
     case CHGK:
 
 #ifdef RUSSIAN
-      uprint("Что? Где? Когда?", &lcd);
+      uprint(F("Что? Где? Когда?"), &lcd);
 #else
-      uprint("What?Where?When?", &lcd);
+      uprint(F("What?Where?When?"), &lcd);
 #endif
 
       break;
   }
 }
 
-
-void printPlayer(uint8_t num) {
-
-// displaying number of player or team
-
+// printPlayer() - display number of player or team
+void printPlayer(uint8_t num)
+{
   char printstring[65];
 
   lcd.setCursor(0, 0);
@@ -385,18 +357,18 @@ void printPlayer(uint8_t num) {
     case BRAIN:
 
 #ifdef RUSSIAN
-      sprintf(printstring, "Команда %u       ", num);
+      sprintf(printstring, ("Команда %u       "), num);
 #else
-      sprintf(printstring, "Team %u          ", num);
+      sprintf(printstring, ("Team %u          "), num);
 #endif
 
       break;
     case SI:
 
 #ifdef RUSSIAN
-      sprintf(printstring, "Игрок %u         ", num);
+      sprintf(printstring, ("Игрок %u         "), num);
 #else
-      sprintf(printstring, "Player %u        ", num);
+      sprintf(printstring, ("Player %u        "), num);
 #endif
 
       break;

@@ -1,7 +1,7 @@
 /*
     Brainuino Aleph
 
-    Copyright (C) 2012, 2013  Dmitry Mikhirev
+    Copyright (C) 2012-2014  Dmitry Mikhirev
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -20,13 +20,15 @@
 #ifndef utf8_h
 #define utf8_h
 
+#include <avr/pgmspace.h>
 #include "Arduino.h"
 
 class utf8 {
   public:
-    utf8(char* string);
+    utf8(const char* string);
+    utf8 (const __FlashStringHelper* flashString);
     ~utf8(void);
-    int32_t get();
+    wchar_t get();
     uint16_t chars();
     uint16_t bytes();
 
@@ -35,6 +37,7 @@ class utf8 {
     uint16_t _chars;
     uint16_t _bytes;
     char* _string;
+    char* _string_p;
 };
 
 #endif

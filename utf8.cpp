@@ -1,7 +1,7 @@
 /*
     Brainuino Aleph
 
-    Copyright (C) 2012, 2013  Dmitry Mikhirev
+    Copyright (C) 2012-2014  Dmitry Mikhirev
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -15,15 +15,16 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "utf8.h"
 #include <string.h>
 
-utf8::utf8 (char* input)
+utf8::utf8 (const char* input)
 {
   _bytes = strlen(input);
   _string = strdup(input);
+  _string_p = NULL;
   _chars = 0;
   for (_index = 0; _index < _bytes; _index++) {
     if ((_string[_index] & 0x80) == 0x00) {
@@ -42,25 +43,83 @@ utf8::utf8 (char* input)
   _index = 0;
 }
 
-utf8::~utf8 ()
+utf8::utf8 (const __FlashStringHelper* input)
 {
-  free(_string);
+  _string_p = (char*) input;
+  _string = NULL;
+  _bytes = strlen_P(_string_p);
+  _chars = 0;
+  for (_index = 0; _index < _bytes; _index++) {
+    if ((pgm_read_byte(_string_p + _index) & 0x80) == 0x00) {
+      _chars++;
+    } else if ((pgm_read_byte(_string_p + _index) & 0x20) == 0x00) {
+      _chars++;
+      _index ++;
+    } else if ((pgm_read_byte(_string_p + _index) & 0x10) == 0x00) {
+      _chars++;
+      _index += 2;
+    } else if ((pgm_read_byte(_string_p + _index) & 0x08) == 0x00) {
+      _chars++;
+      _index += 3;
+    }
+  }
+  _index = 0;
 }
 
-int32_t utf8::get()
+utf8::~utf8 ()
 {
-  int32_t code;
-  if ((_string[_index] & 0x80) == 0) {
-    code = int32_t(_string[_index]);
-    _index++;
-  } else if ((_string[_index] & 0x20) == 0) {
-    code = int32_t(_string[_index] & 0x1f) << 6 | int32_t(_string[_index+1] & 0x3f);
-    _index += 2;
-  } else if ((_string[_index] & 0x10) == 0) {
-    code = int32_t(_string[_index] & 0xf) << 12 | int32_t(_string[_index+1] & 0x3f) << 6 | int32_t(_string[_index+2] & 0x3f);
-    _index += 3;
-  } else if ((_string[_index] & 0x8) == 0) {
-    code = int32_t(_string[_index] & 0x7) << 18 | int32_t(_string[_index+1] & 0x3f) << 12 | int32_t(_string[_index+2] & 0x3f) << 6 | int32_t(_string[_index+3] & 0x3f);
+  if (_string != NULL)
+    free(_string);
+}
+
+wchar_t utf8::get()
+{
+  wchar_t code;
+  if (_string_p == NULL) { // string in RAM
+    if ((_string[_index] & 0x80) == 0) {
+      code = wchar_t(_string[_index]);
+      _index++;
+    } else if ((_string[_index] & 0x20) == 0) {
+      code = wchar_t(_string[_index]   & 0x1f) <<  6 |
+             wchar_t(_string[_index+1] & 0x3f);
+      _index += 2;
+    } else if ((_string[_index] & 0x10) == 0) {
+      code = wchar_t(_string[_index]   & 0x0f) << 12 |
+             wchar_t(_string[_index+1] & 0x3f) <<  6 |
+             wchar_t(_string[_index+2] & 0x3f);
+      _index += 3;
+    } else if (((_string[_index] & 0x8) == 0) && (sizeof(code) >= 3)) {
+      code = wchar_t(_string[_index]   & 0x07) << 18 |
+             wchar_t(_string[_index+1] & 0x3f) << 12 |
+             wchar_t(_string[_index+2] & 0x3f) <<  6 |
+             wchar_t(_string[_index+3] & 0x3f);
+    } else {
+      code = '?';
+      _index++;
+    }
+  } else { // string in flash
+    byte first = pgm_read_byte(_string_p + _index);
+      if ((first & 0x80) == 0) {
+      code = wchar_t(first);
+      _index++;
+    } else if ((first & 0x20) == 0) {
+      code = wchar_t(first                                 & 0x1f) <<  6 |
+             wchar_t(pgm_read_byte(_string_p + _index + 1) & 0x3f);
+      _index += 2;
+    } else if ((first & 0x10) == 0) {
+      code = wchar_t(first                                 & 0x0f) << 12 |
+             wchar_t(pgm_read_byte(_string_p + _index + 1) & 0x3f) <<  6 |
+             wchar_t(pgm_read_byte(_string_p + _index + 2) & 0x3f);
+      _index += 3;
+    } else if (((first & 0x8) == 0) && (sizeof(code) >= 3)) {
+      code = wchar_t(first                                 & 0x07) << 18 |
+             wchar_t(pgm_read_byte(_string_p + _index + 1) & 0x3f) << 12 |
+             wchar_t(pgm_read_byte(_string_p + _index + 2) & 0x3f) <<  6 |
+             wchar_t(pgm_read_byte(_string_p + _index + 3) & 0x3f);
+    } else {
+      code = '?';
+      _index++;
+    }
   }
   if (_index >= _bytes) _index = 0;
   return code;

@@ -1,7 +1,7 @@
 /*
     Brainuino Aleph
 
-    Copyright (C) 2011-2012  Dmitry Mikhirev
+    Copyright (C) 2011, 2012, 2014  Dmitry Mikhirev
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -22,6 +22,9 @@
 
 #include "utf8.h"
 
-size_t uprint (char*, LiquidCrystal*);
+size_t uprint (const char*, Print*);
+size_t uprint(const __FlashStringHelper*, Print*);
+size_t utf8print(utf8*, Print*);
+char codeOf(wchar_t);
 
 #endif

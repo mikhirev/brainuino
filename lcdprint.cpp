@@ -1,7 +1,7 @@
 /*
     Brainuino Aleph
 
-    Copyright (C) 2011-2012  Dmitry Mikhirev
+    Copyright (C) 2011, 2012, 2014  Dmitry Mikhirev
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -21,31 +21,54 @@
 #include "lcdprint.h"
 #include "font.h"
 
-size_t uprint(char* rawstr, LiquidCrystal *lcd)
+size_t uprint(const char* rawstr, Print* out)
 {
-  int32_t ucode;
-  int i, j;
-  int numcodes = sizeof(charmap)/sizeof(charcode);
   utf8 str = utf8(rawstr);
-  char result[str.chars()];
+  return utf8print(&str, out);
+}
 
-  for (i = 0; i < str.chars(); i++) {
-    ucode = str.get();
-    if (ucode > 0x0000) {
-      if (ucode <= 0x007d) {
-        result[i] = ucode;
-      } else {
-        result[i] = 0xff;
-        for (j = 0; (j < numcodes) && (pgm_read_dword(&charmap[j].uni) <= ucode); j++) {
-            if (pgm_read_dword(&charmap[j].uni) == ucode) {
-              result[i] = pgm_read_byte(&charmap[j].font);
-            }
-        }
-      }
+size_t uprint(const __FlashStringHelper* rawstr, Print* out)
+{
+  utf8 str = utf8(rawstr);
+  return utf8print(&str, out);
+}
+
+size_t utf8print(utf8* str, Print* out)
+{
+  char result[str->chars() + 1];
+  wchar_t ucode;
+  int i;
+
+  for (i = 0; i < (str->chars()); i++) {
+    ucode = str->get();
+    if (ucode != 0x0000) {
+      result[i] = codeOf(ucode);
     } else {
       break;
     }
   }
-  result[i] = 0;
-  return lcd->print(result);
+  result[i] = '\0';
+  return out->print(result);
+}
+
+char codeOf(wchar_t ucode)
+{
+  if (ucode > 0x0000 && ucode <= 0x007d) // ASCII symbol
+    return char(ucode);
+
+  int low, high, mid;
+
+  low = 0;
+  high = sizeof(charmap)/sizeof(charcode) - 1;
+  while (low <= high) {
+    mid = (low + high) >> 1;
+    wchar_t u = pgm_read_word(&charmap[mid].uni);
+    if (wchar_t(u) > ucode)
+      high = mid - 1;
+    else if (u < ucode)
+      low = mid + 1;
+    else
+      return pgm_read_byte(&charmap[mid].font);
+  }
+  return NOCHAR;
 }
