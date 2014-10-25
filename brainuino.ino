@@ -17,7 +17,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <stdio.h>
 #include <LiquidCrystal.h>
 
 #include "pinout.h"
@@ -253,6 +252,7 @@ void printTime()
 void printPreciseTime()
 {
   char s[5];
+  uint16_t ms;
 
   lcd.setCursor(8, 1);
 
@@ -260,7 +260,13 @@ void printPreciseTime()
     time = millis()-startTime;
     itoa(time/1000, s, 10);
     uprint(s, &lcd);
-    sprintf(s, ".%03u", time%1000);
+    uprint(".", &lcd);
+    ms = time%1000;
+    if (ms < 100) {
+      uprint("0", &lcd);
+      if (ms < 10) uprint("0", &lcd);
+    }
+    itoa(ms, s, 10);
     uprint(s, &lcd);
   } else { // timer was not started yet
 #ifdef RUSSIAN
@@ -274,7 +280,7 @@ void printPreciseTime()
 // readButton() - scan buttons
 void readButton()
 {
-  if (buttonPressed > 0)
+  if (buttonPressed > 0 || gameType == CHGK)
     return;
   if (digitalRead(BUTTON1) == LOW) {
     buttonPressed = 1;
@@ -350,29 +356,38 @@ void printGameType()
 // printPlayer() - display number of player or team
 void printPlayer(uint8_t num)
 {
+  char nums[2];
   char printstring[65];
 
+  itoa(num, nums, 10);
   lcd.setCursor(0, 0);
   switch (gameType) {
     case BRAIN:
 
 #ifdef RUSSIAN
-      sprintf(printstring, ("Команда %u       "), num);
+      uprint(F("Команда "), &lcd);
+      uprint(nums, &lcd);
+      uprint(F("       "), &lcd);
 #else
-      sprintf(printstring, ("Team %u          "), num);
+      uprint(F("Team "), &lcd);
+      uprint(nums, &lcd);
+      uprint(F("          "), &lcd);
 #endif
 
       break;
     case SI:
 
 #ifdef RUSSIAN
-      sprintf(printstring, ("Игрок %u         "), num);
+      uprint(F("Игрок "), &lcd);
+      uprint(nums, &lcd);
+      uprint(F("         "), &lcd);
 #else
-      sprintf(printstring, ("Player %u        "), num);
+      uprint(F("Player "), &lcd);
+      uprint(nums, &lcd);
+      uprint(F("        "), &lcd);
 #endif
 
       break;
   }
-  uprint(printstring, &lcd);
   buttonPressed = 0;
 }
