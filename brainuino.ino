@@ -23,6 +23,20 @@
 #include "game.h"
 #include "lcdprint.h"
 
+void ask(void);
+answer_t discuss(uint16_t);
+answer_t answer(uint8_t);
+void falseStart(uint8_t);
+void refresh(void);
+void printState(const char*);
+void printState(const __FlashStringHelper*);
+void printTime(void);
+void printPreciseTime(void);
+void readButton(void);
+void pinInit(void);
+void printGameType(void);
+void printPlayer(uint8_t);
+
 LiquidCrystal lcd(LCD4, LCD6, LCD11, LCD12, LCD13, LCD14);
 
 void setup()
@@ -387,6 +401,8 @@ void printPlayer(uint8_t num)
       uprint(F("        "), &lcd);
 #endif
 
+      break;
+    default:
       break;
   }
   buttonPressed = 0;
