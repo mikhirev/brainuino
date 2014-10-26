@@ -371,7 +371,6 @@ void printGameType()
 void printPlayer(uint8_t num)
 {
   char nums[2];
-  char printstring[65];
 
   itoa(num, nums, 10);
   lcd.setCursor(0, 0);

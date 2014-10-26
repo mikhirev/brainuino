@@ -27,7 +27,7 @@ const char NOCHAR = 0xff;
 
 struct charcode {
   const wchar_t uni;
-  const char font;
+  const unsigned char font;
 };
 
 const charcode charmap[] PROGMEM = {
