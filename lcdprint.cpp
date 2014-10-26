@@ -37,7 +37,7 @@ size_t utf8print(utf8* str, Print* out)
 {
   char result[str->chars() + 1];
   wchar_t ucode;
-  int i;
+  uint16_t i;
 
   for (i = 0; i < (str->chars()); i++) {
     ucode = str->get();
