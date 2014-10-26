@@ -42,6 +42,6 @@ uint8_t timer2;
 uint8_t preSignal;
 uint32_t startTime;
 uint32_t time;
-uint8_t buttonPressed;
+volatile uint8_t buttonPressed;
 
 #endif
