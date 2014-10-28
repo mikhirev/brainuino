@@ -1,0 +1,81 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+BRAIN	game.h	/^  BRAIN ,$/;"	e	enum:game_t
+BUTTON1	pinout.h	/^  BUTTON1 = 14,$/;"	e	enum:__anon1
+BUTTON2	pinout.h	/^  BUTTON2 = 15,$/;"	e	enum:__anon1
+BUTTON3	pinout.h	/^  BUTTON3 = 16,$/;"	e	enum:__anon1
+BUTTON4	pinout.h	/^  BUTTON4 = 17,$/;"	e	enum:__anon1
+CHGK	game.h	/^  CHGK,$/;"	e	enum:game_t
+CONTROL1	pinout.h	/^  CONTROL1 = 18,$/;"	e	enum:__anon1
+CONTROL2	pinout.h	/^  CONTROL2 = 19,$/;"	e	enum:__anon1
+CORRECT	game.h	/^  CORRECT =  1,$/;"	e	enum:answer_t
+ENCODERB	pinout.h	/^  ENCODERB = 4,$/;"	e	enum:__anon1
+ENCPUSH	pinout.h	/^  ENCPUSH = 20,$/;"	e	enum:__anon1
+GREENLAMP	pinout.h	/^  GREENLAMP = 13,$/;"	e	enum:__anon1
+LCD11	pinout.h	/^  LCD11 =  9,$/;"	e	enum:__anon1
+LCD12	pinout.h	/^  LCD12 = 10,$/;"	e	enum:__anon1
+LCD13	pinout.h	/^  LCD13 = 11,$/;"	e	enum:__anon1
+LCD14	pinout.h	/^  LCD14 = 12,$/;"	e	enum:__anon1
+LCD4	pinout.h	/^  LCD4  =  7,$/;"	e	enum:__anon1
+LCD6	pinout.h	/^  LCD6  =  8,$/;"	e	enum:__anon1
+NOCHAR	font.h	/^const char NOCHAR = 0xff;$/;"	v
+NOREPLY	game.h	/^  NOREPLY = -1,$/;"	e	enum:answer_t
+PROGMEM	font.h	/^const charcode charmap[] PROGMEM = {$/;"	v
+REDLAMP	pinout.h	/^  REDLAMP   =  6,$/;"	e	enum:__anon1
+RUSSIAN	pinout.h	29;"	d
+SI	game.h	/^  SI,$/;"	e	enum:game_t
+SPEAKER	pinout.h	/^  SPEAKER = 5,$/;"	e	enum:__anon1
+WRONG	game.h	/^  WRONG   =  0,$/;"	e	enum:answer_t
+_bytes	utf8.h	/^    uint16_t _bytes;$/;"	m	class:utf8
+_chars	utf8.h	/^    uint16_t _chars;$/;"	m	class:utf8
+_index	utf8.h	/^    uint16_t _index;$/;"	m	class:utf8
+_string	utf8.h	/^    char* _string;$/;"	m	class:utf8
+_string_p	utf8.h	/^    char* _string_p;$/;"	m	class:utf8
+answer	brainuino.ino	/^answer_t answer(uint8_t num)$/;"	f
+answer_t	game.h	/^enum answer_t {$/;"	g
+ask	brainuino.ino	/^void ask()$/;"	f
+buttonPressed	game.h	/^volatile uint8_t buttonPressed;$/;"	v
+bytes	utf8.cpp	/^uint16_t utf8::bytes()$/;"	f	class:utf8
+charcode	font.h	/^struct charcode {$/;"	s
+chars	utf8.cpp	/^uint16_t utf8::chars()$/;"	f	class:utf8
+codeOf	lcdprint.cpp	/^char codeOf(wchar_t ucode)$/;"	f
+discuss	brainuino.ino	/^answer_t discuss(uint16_t timer)$/;"	f
+falseStart	brainuino.ino	/^void falseStart(uint8_t num)$/;"	f
+font	font.h	/^  const unsigned char font;$/;"	m	struct:charcode
+font_h	font.h	21;"	d
+gameType	game.h	/^game_t gameType;$/;"	v
+game_h	game.h	21;"	d
+game_t	game.h	/^enum game_t {$/;"	g
+get	utf8.cpp	/^wchar_t utf8::get()$/;"	f	class:utf8
+lcdprint_h	lcdprint.h	21;"	d
+loop	brainuino.ino	/^void loop()$/;"	f
+pinInit	brainuino.ino	/^void pinInit()$/;"	f
+pinout_h	pinout.h	26;"	d
+preSignal	game.h	/^uint8_t preSignal;$/;"	v
+printGameType	brainuino.ino	/^void printGameType()$/;"	f
+printPlayer	brainuino.ino	/^void printPlayer(uint8_t num)$/;"	f
+printPreciseTime	brainuino.ino	/^void printPreciseTime()$/;"	f
+printState	brainuino.ino	/^void printState(const __FlashStringHelper *state)$/;"	f
+printState	brainuino.ino	/^void printState(const char *state)$/;"	f
+printTime	brainuino.ino	/^void printTime()$/;"	f
+readButton	brainuino.ino	/^void readButton()$/;"	f
+refresh	brainuino.ino	/^void refresh()$/;"	f
+setup	brainuino.ino	/^void setup()$/;"	f
+startTime	game.h	/^uint32_t startTime;$/;"	v
+time	game.h	/^uint32_t time;$/;"	v
+timer1	game.h	/^uint8_t timer1;$/;"	v
+timer2	game.h	/^uint8_t timer2;$/;"	v
+uni	font.h	/^  const wchar_t uni;$/;"	m	struct:charcode
+uprint	lcdprint.cpp	/^size_t uprint(const __FlashStringHelper* rawstr, Print* out)$/;"	f
+uprint	lcdprint.cpp	/^size_t uprint(const char* rawstr, Print* out)$/;"	f
+utf8	utf8.cpp	/^utf8::utf8 (const __FlashStringHelper* input)$/;"	f	class:utf8
+utf8	utf8.cpp	/^utf8::utf8 (const char* input)$/;"	f	class:utf8
+utf8	utf8.h	/^class utf8 {$/;"	c
+utf8_h	utf8.h	21;"	d
+utf8print	lcdprint.cpp	/^size_t utf8print(utf8* str, Print* out)$/;"	f
+withFalseStart	game.h	/^bool withFalseStart;$/;"	v
+~utf8	utf8.cpp	/^utf8::~utf8 ()$/;"	f	class:utf8
