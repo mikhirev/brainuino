@@ -88,11 +88,13 @@ wchar_t utf8::get()
              wchar_t(_string[_index+1] & 0x3f) <<  6 |
              wchar_t(_string[_index+2] & 0x3f);
       _index += 3;
-    } else if (((_string[_index] & 0x8) == 0) && (sizeof(code) >= 3)) {
+#if WCHAR_MAX - WCHAR_MIN >= 16777215
+    } else if ((_string[_index] & 0x8) == 0) {
       code = wchar_t(_string[_index]   & 0x07) << 18 |
              wchar_t(_string[_index+1] & 0x3f) << 12 |
              wchar_t(_string[_index+2] & 0x3f) <<  6 |
              wchar_t(_string[_index+3] & 0x3f);
+#endif
     } else {
       code = '?';
       _index++;
@@ -111,11 +113,13 @@ wchar_t utf8::get()
              wchar_t(pgm_read_byte(_string_p + _index + 1) & 0x3f) <<  6 |
              wchar_t(pgm_read_byte(_string_p + _index + 2) & 0x3f);
       _index += 3;
-    } else if (((first & 0x8) == 0) && (sizeof(code) >= 3)) {
+#if WCHAR_MAX - WCHAR_MIN >= 16777215
+    } else if ((first & 0x8) == 0) {
       code = wchar_t(first                                 & 0x07) << 18 |
              wchar_t(pgm_read_byte(_string_p + _index + 1) & 0x3f) << 12 |
              wchar_t(pgm_read_byte(_string_p + _index + 2) & 0x3f) <<  6 |
              wchar_t(pgm_read_byte(_string_p + _index + 3) & 0x3f);
+#endif
     } else {
       code = '?';
       _index++;
